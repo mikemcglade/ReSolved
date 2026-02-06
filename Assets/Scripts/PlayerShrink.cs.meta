@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 72a1dc7212cea4b8885ac7f39dd7a850
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - liquidMaterial: {fileID: 2100000, guid: dc8df73c26c73400195716fb7cc3b4bf, type: 2}
+  - shrinkSFX: {instanceID: 0}
+  - growSFX: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
