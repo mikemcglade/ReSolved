@@ -21,16 +21,14 @@ public class PatrollingEnemyAI : MonoBehaviour
     private enum State { Patrolling, Waiting, Chasing, Returning }
     private State currentState = State.Patrolling;
 
-    void Start() 
+    void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
         
         if (waypoints.Length > 0)
         {
-            Debug.Log("Starting patrol with " + waypoints.Length + " waypoints");
             agent.SetDestination(waypoints[currentWaypointIndex].position);
-            Debug.Log("Set destination to waypoint " + currentWaypointIndex + " at position " + waypoints[currentWaypointIndex].position);
         }
         else
         {
@@ -76,13 +74,9 @@ public class PatrollingEnemyAI : MonoBehaviour
 
     void Patrol()
     {
-        // Debug info
-        Debug.Log("Patrolling - Remaining distance: " + agent.remainingDistance + ", Stopping distance: " + agent.stoppingDistance);
-        
         // Check if we've reached the current waypoint
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
-            Debug.Log("Reached waypoint " + currentWaypointIndex + ", switching to Waiting");
             currentState = State.Waiting;
             waitTimer = 0f;
         }
