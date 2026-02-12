@@ -11,8 +11,14 @@ public class PatrollingEnemyAI : MonoBehaviour
     [SerializeField] private float detectionRange = 10f;
     [SerializeField] private float chaseTimeout = 2f;
     
+    [Header("Visual Feedback")]
+    [SerializeField] private Color normalColor = Color.white;
+    [SerializeField] private Color chaseColor = Color.red;
+    
     private NavMeshAgent agent;
     private Transform player;
+    private Renderer[] enemyRenderers;
+    private Material[][] originalMaterials;
     
     private int currentWaypointIndex = 0;
     private float waitTimer = 0f;
@@ -25,6 +31,14 @@ public class PatrollingEnemyAI : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        
+        // Get all renderers (handles multiple materials like player script)
+        enemyRenderers = GetComponentsInChildren<Renderer>();
+        originalMaterials = new Material[enemyRenderers.Length][];
+        for (int i = 0; i < enemyRenderers.Length; i++)
+        {
+            originalMaterials[i] = enemyRenderers[i].sharedMaterials;
+        }
         
         if (waypoints.Length > 0)
         {
@@ -99,6 +113,9 @@ public class PatrollingEnemyAI : MonoBehaviour
     {
         currentState = State.Chasing;
         chaseTimer = 0f;
+        
+        // Change all materials to chase color
+        SetMaterialColors(chaseColor);
     }
 
     void Chase(float distanceToPlayer)
@@ -138,6 +155,9 @@ public class PatrollingEnemyAI : MonoBehaviour
         {
             currentState = State.Waiting;
             waitTimer = 0f;
+            
+            // Reset to original material colors
+            ResetMaterialColors();
         }
     }
 
@@ -176,6 +196,25 @@ public class PatrollingEnemyAI : MonoBehaviour
         }
         
         return false; // Wall or obstacle blocking view
+    }
+
+    void SetMaterialColors(Color color)
+    {
+        foreach (Renderer renderer in enemyRenderers)
+        {
+            foreach (Material material in renderer.materials)
+            {
+                material.color = color;
+            }
+        }
+    }
+
+    void ResetMaterialColors()
+    {
+        for (int i = 0; i < enemyRenderers.Length; i++)
+        {
+            enemyRenderers[i].materials = originalMaterials[i];
+        }
     }
 
     // Visualize detection range in Scene view

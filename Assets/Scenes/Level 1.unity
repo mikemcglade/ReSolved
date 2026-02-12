@@ -14493,6 +14493,8 @@ MonoBehaviour:
   waypointWaitTime: 2
   detectionRange: 5
   chaseTimeout: 2
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  chaseColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!195 &1787750817
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -15144,7 +15146,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1852888610896456, guid: 1375a663e25cc476d881e6efd0da4032, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 36.44
+      value: 36.87
       objectReference: {fileID: 0}
     - target: {fileID: 1852888610896456, guid: 1375a663e25cc476d881e6efd0da4032, type: 3}
       propertyPath: m_LocalRotation.w
@@ -15869,7 +15871,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1781957226032141528, guid: 8c756308d5e154b418261e36f1b0b774, type: 3}
       propertyPath: detectionRange
-      value: 8
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 1781957226032141528, guid: 8c756308d5e154b418261e36f1b0b774, type: 3}
       propertyPath: waypoints.Array.size
