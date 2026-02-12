@@ -21,7 +21,7 @@ public class PatrollingEnemyAI : MonoBehaviour
     private enum State { Patrolling, Waiting, Chasing, Returning }
     private State currentState = State.Patrolling;
 
-    void Start()
+    void Start() 
     {
         agent = GetComponent<NavMeshAgent>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
