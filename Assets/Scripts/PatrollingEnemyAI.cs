@@ -45,8 +45,8 @@ public class PatrollingEnemyAI : MonoBehaviour
             case State.Patrolling:
                 Patrol();
                 
-                // Check if player is in range
-                if (distanceToPlayer <= detectionRange)
+                // Check if player is in range AND visible
+                if (distanceToPlayer <= detectionRange && CanSeePlayer())
                 {
                     StartChasing();
                 }
@@ -55,8 +55,8 @@ public class PatrollingEnemyAI : MonoBehaviour
             case State.Waiting:
                 Wait();
                 
-                // Can still detect player while waiting
-                if (distanceToPlayer <= detectionRange)
+                // Can still detect player while waiting (if visible)
+                if (distanceToPlayer <= detectionRange && CanSeePlayer())
                 {
                     StartChasing();
                 }
@@ -106,15 +106,15 @@ public class PatrollingEnemyAI : MonoBehaviour
         // Move towards player
         agent.SetDestination(player.position);
         
-        // Check if player is still in range
-        if (distanceToPlayer <= detectionRange)
+        // Check if player is still in range AND visible
+        if (distanceToPlayer <= detectionRange && CanSeePlayer())
         {
-            // Player is still close, reset timer
+            // Player is still close and visible, reset timer
             chaseTimer = 0f;
         }
         else
         {
-            // Player is out of range, increment timer
+            // Player is out of range or not visible, increment timer
             chaseTimer += Time.deltaTime;
             
             if (chaseTimer >= chaseTimeout)
@@ -159,10 +159,48 @@ public class PatrollingEnemyAI : MonoBehaviour
         return nearestIndex;
     }
 
+    bool CanSeePlayer()
+    {
+        // Direction to player
+        Vector3 directionToPlayer = (player.position - transform.position).normalized;
+        
+        // Cast a ray from enemy towards player
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, directionToPlayer, out hit, detectionRange))
+        {
+            // Check if the ray hit the player
+            if (hit.transform.CompareTag("Player"))
+            {
+                return true; // Can see player
+            }
+        }
+        
+        return false; // Wall or obstacle blocking view
+    }
+
     // Visualize detection range in Scene view
     void OnDrawGizmosSelected()
     {
+        // Detection range sphere
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
+        
+        // Line of sight ray (only in Play mode when player exists)
+        if (player != null)
+        {
+            Vector3 directionToPlayer = (player.position - transform.position).normalized;
+            
+            // Draw green line if can see player, red if blocked
+            if (CanSeePlayer())
+            {
+                Gizmos.color = Color.green;
+            }
+            else
+            {
+                Gizmos.color = Color.red;
+            }
+            
+            Gizmos.DrawLine(transform.position, transform.position + directionToPlayer * detectionRange);
+        }
     }
 }
