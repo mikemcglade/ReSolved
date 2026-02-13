@@ -2078,6 +2078,14 @@ PrefabInstance:
       propertyPath: waypoints.Array.data[3]
       value: 
       objectReference: {fileID: 1274756834}
+    - target: {fileID: 1035646328854737713, guid: 8c756308d5e154b418261e36f1b0b774, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1035646328854737713, guid: 8c756308d5e154b418261e36f1b0b774, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1781957226032141528, guid: 8c756308d5e154b418261e36f1b0b774, type: 3}
       propertyPath: waypoints.Array.data[0]
       value: 
@@ -2137,6 +2145,10 @@ PrefabInstance:
     - target: {fileID: 3379071695080542007, guid: 8c756308d5e154b418261e36f1b0b774, type: 3}
       propertyPath: m_Name
       value: Enemy Follower Patrol
+      objectReference: {fileID: 0}
+    - target: {fileID: 3379071695080542007, guid: 8c756308d5e154b418261e36f1b0b774, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2249,7 +2261,7 @@ Transform:
   m_GameObject: {fileID: 354601901}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.5, y: 1.3, z: 16.1}
+  m_LocalPosition: {x: 0.1, y: 1.3, z: -9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2335,7 +2347,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 12
-  smoothness: 0.2
+  rotationSpeed: 5
   fireRate: 1
   canFire: -1
   projectilePrefab: {fileID: 8102746377321594267, guid: c602ef8ff775646359d904edb0dafcba, type: 3}
@@ -8702,6 +8714,10 @@ PrefabInstance:
     - target: {fileID: 3379071695080542007, guid: 8c756308d5e154b418261e36f1b0b774, type: 3}
       propertyPath: m_Name
       value: Enemy Follower Patrol 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3379071695080542007, guid: 8c756308d5e154b418261e36f1b0b774, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -16072,6 +16088,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy Follower Patrol 2
       objectReference: {fileID: 0}
+    - target: {fileID: 3379071695080542007, guid: 8c756308d5e154b418261e36f1b0b774, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -21156,6 +21176,10 @@ PrefabInstance:
     - target: {fileID: 9084881788199016226, guid: 1d7a1794b7e0149dbb7e20065cd516c3, type: 3}
       propertyPath: m_Name
       value: Enemy Follower
+      objectReference: {fileID: 0}
+    - target: {fileID: 9084881788199016226, guid: 1d7a1794b7e0149dbb7e20065cd516c3, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
