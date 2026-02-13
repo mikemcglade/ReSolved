@@ -14,6 +14,7 @@ public class PatrollingEnemyAI : MonoBehaviour
     [Header("Visual Feedback")]
     [SerializeField] private Color normalColor = Color.white;
     [SerializeField] private Color chaseColor = Color.red;
+    [SerializeField] private ParticleSystem alertParticle;
     
     private NavMeshAgent agent;
     private Transform player;
@@ -38,6 +39,12 @@ public class PatrollingEnemyAI : MonoBehaviour
         for (int i = 0; i < enemyRenderers.Length; i++)
         {
             originalMaterials[i] = enemyRenderers[i].sharedMaterials;
+        }
+        
+        // Make sure alert particle is off at start
+        if (alertParticle != null)
+        {
+            alertParticle.Stop();
         }
         
         if (waypoints.Length > 0)
@@ -116,6 +123,12 @@ public class PatrollingEnemyAI : MonoBehaviour
         
         // Change all materials to chase color
         SetMaterialColors(chaseColor);
+        
+        // Start alert particle effect
+        if (alertParticle != null)
+        {
+            alertParticle.Play();
+        }
     }
 
     void Chase(float distanceToPlayer)
@@ -158,6 +171,12 @@ public class PatrollingEnemyAI : MonoBehaviour
             
             // Reset to original material colors
             ResetMaterialColors();
+            
+            // Stop alert particle effect
+            if (alertParticle != null)
+            {
+                alertParticle.Stop();
+            }
         }
     }
 
