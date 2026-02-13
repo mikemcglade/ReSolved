@@ -56,22 +56,41 @@ public class PlayerControl : MonoBehaviour
         float verticalInput = Input.GetAxis("Vertical");
 
         // Create movement direction
-        Vector3 movement = new Vector3(horizontalInput, 0, verticalInput).normalized;
+        Vector3 movement = new Vector3(horizontalInput, 0, verticalInput);
         
         // Apply movement using MovePosition (no ice skating)
         if (movement.magnitude > 0.1f)
         {
-            Vector3 newPosition = playerRb.position + movement * speed * Time.fixedDeltaTime;
+            // Normalize the movement
+            movement = movement.normalized;
+            
+            // Snap to 8 directions (N, NE, E, SE, S, SW, W, NW)
+            Vector3 snappedDirection = SnapToEightDirections(movement);
+            
+            Vector3 newPosition = playerRb.position + snappedDirection * speed * Time.fixedDeltaTime;
             playerRb.MovePosition(newPosition);
             
-            // Rotate player to face movement direction
-            Quaternion targetRotation = Quaternion.LookRotation(movement);
-            playerRb.rotation = Quaternion.Slerp(playerRb.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
+            // Rotate player to face snapped direction (faster smoothing)
+            Quaternion targetRotation = Quaternion.LookRotation(snappedDirection);
+            playerRb.rotation = Quaternion.Slerp(playerRb.rotation, targetRotation, 20f * Time.fixedDeltaTime);
         }
         
         // Update animator
         this.anim.SetFloat("vertical", verticalInput);
         this.anim.SetFloat("horizontal", horizontalInput);
+    }
+    
+    Vector3 SnapToEightDirections(Vector3 direction)
+    {
+        // Calculate angle from direction
+        float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+        
+        // Snap to nearest 45-degree increment
+        float snappedAngle = Mathf.Round(angle / 45f) * 45f;
+        
+        // Convert back to direction vector
+        float radians = snappedAngle * Mathf.Deg2Rad;
+        return new Vector3(Mathf.Sin(radians), 0, Mathf.Cos(radians));
     }
 
     void ConstrainPlayerPosition()
