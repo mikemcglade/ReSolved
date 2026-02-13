@@ -12,8 +12,23 @@ public class FlamethrowerWeapon : MonoBehaviour
     [Header("Visual Effects")]
     public ParticleSystem flameEffect;
     
+    [Header("Audio")]
+    public AudioClip flamethrowerSound;
+    public AudioClip enemyKillSound;
+    
     private bool canFire = true;
     private float cooldownTimer = 0f;
+    private AudioSource audioSource;
+
+    void Start()
+    {
+        // Get or add AudioSource component
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+    }
 
     void Update()
     {
@@ -38,6 +53,12 @@ public class FlamethrowerWeapon : MonoBehaviour
     {
         canFire = false;
         cooldownTimer = cooldown;
+        
+        // Play flamethrower sound
+        if (flamethrowerSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(flamethrowerSound);
+        }
         
         // Start visual effect
         if (flameEffect != null)
@@ -83,6 +104,12 @@ public class FlamethrowerWeapon : MonoBehaviour
                 
                 if (angleToEnemy < coneAngle / 2f)
                 {
+                    // Play kill sound
+                    if (enemyKillSound != null)
+                    {
+                        AudioSource.PlayClipAtPoint(enemyKillSound, col.transform.position);
+                    }
+                    
                     // Enemy is in cone - destroy it
                     Destroy(col.gameObject);
                 }
