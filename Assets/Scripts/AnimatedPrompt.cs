@@ -45,6 +45,22 @@ public class AnimatedPrompt : MonoBehaviour
 
     void OnEnable()
     {
+        // Ensure CanvasGroup exists before using it
+        if (canvasGroup == null)
+        {
+            canvasGroup = GetComponent<CanvasGroup>();
+            if (canvasGroup == null)
+            {
+                canvasGroup = gameObject.AddComponent<CanvasGroup>();
+            }
+        }
+        
+        // Ensure originalPosition is set
+        if (originalPosition == Vector3.zero)
+        {
+            originalPosition = transform.localPosition;
+        }
+        
         // Reset and start animation when panel opens
         canvasGroup.alpha = 0f;
         transform.localPosition = originalPosition;
