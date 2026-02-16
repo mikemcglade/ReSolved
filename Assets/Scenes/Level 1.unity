@@ -7551,7 +7551,7 @@ MonoBehaviour:
   cooldown: 2
   flameEffect: {fileID: 120847375}
   flamethrowerSound: {fileID: 8300000, guid: 9c8d7ddd7565541f0b59969221ebabbc, type: 3}
-  enemyKillSound: {fileID: 8300000, guid: 5d00894d919bb4b25a54a3688c5b1b3f, type: 3}
+  enemyKillSound: {fileID: 8300000, guid: 0c4d74b59be37448fa3336dd222f1976, type: 3}
 --- !u!1 &367064104
 GameObject:
   m_ObjectHideFlags: 0

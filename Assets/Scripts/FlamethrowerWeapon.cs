@@ -19,6 +19,7 @@ public class FlamethrowerWeapon : MonoBehaviour
     private bool canFire = true;
     private float cooldownTimer = 0f;
     private AudioSource audioSource;
+    private PlayerShrink playerShrink;
 
     void Start()
     {
@@ -28,6 +29,9 @@ public class FlamethrowerWeapon : MonoBehaviour
         {
             audioSource = gameObject.AddComponent<AudioSource>();
         }
+        
+        // Get PlayerShrink component
+        playerShrink = GetComponent<PlayerShrink>();
     }
 
     void Update()
@@ -42,8 +46,9 @@ public class FlamethrowerWeapon : MonoBehaviour
             }
         }
 
-        // Fire flamethrower on E key ONLY if not near an interactable object
-        if (Input.GetKeyDown(KeyCode.E) && canFire && !InteractableObject.PlayerNearInteractable)
+        // Fire flamethrower on E key ONLY if not near an interactable object AND not shrunk
+        bool isShrunk = playerShrink != null && playerShrink.IsShrunk;
+        if (Input.GetKeyDown(KeyCode.E) && canFire && !InteractableObject.PlayerNearInteractable && !isShrunk)
         {
             FireFlamethrower();
         }
@@ -115,10 +120,10 @@ public class FlamethrowerWeapon : MonoBehaviour
                         }
                     }
                     
-                    // Play kill sound
+                    // Play kill sound with slight delay
                     if (enemyKillSound != null)
                     {
-                        AudioSource.PlayClipAtPoint(enemyKillSound, col.transform.position);
+                        StartCoroutine(PlayDelayedSound(enemyKillSound, col.transform.position, 0.1f));
                     }
                     
                     // Enemy is in cone - destroy it
@@ -142,6 +147,12 @@ public class FlamethrowerWeapon : MonoBehaviour
         Gizmos.DrawLine(transform.position, transform.position + right);
         Gizmos.DrawLine(transform.position, transform.position + left);
         Gizmos.DrawLine(transform.position + right, transform.position + left);
+    }
+    
+    IEnumerator PlayDelayedSound(AudioClip clip, Vector3 position, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        AudioSource.PlayClipAtPoint(clip, position);
     }
 }
 
