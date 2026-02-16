@@ -104,6 +104,17 @@ public class FlamethrowerWeapon : MonoBehaviour
                 
                 if (angleToEnemy < coneAngle / 2f)
                 {
+                    // Get enemy's point value and add to score
+                    DetectCollisions detectCollisions = col.GetComponent<DetectCollisions>();
+                    if (detectCollisions != null)
+                    {
+                        GameManager gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+                        if (gameManager != null)
+                        {
+                            gameManager.AddScore(detectCollisions.pointValue);
+                        }
+                    }
+                    
                     // Play kill sound
                     if (enemyKillSound != null)
                     {
