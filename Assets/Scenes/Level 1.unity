@@ -15451,6 +15451,8 @@ MonoBehaviour:
   interactionPanel1: {fileID: 123624759}
   interactSound: {fileID: 8300000, guid: 004743b7144db4b9bb585cafd2d442a6, type: 3}
   promptUI: {fileID: 1536206258}
+  detectionRange: 5
+  fadeSpeed: 3
 --- !u!1 &792269895
 GameObject:
   m_ObjectHideFlags: 0
@@ -15799,7 +15801,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &854361682
 RectTransform:
   m_ObjectHideFlags: 0
@@ -18986,6 +18988,8 @@ MonoBehaviour:
   interactionPanel1: {fileID: 854361681}
   interactSound: {fileID: 8300000, guid: 004743b7144db4b9bb585cafd2d442a6, type: 3}
   promptUI: {fileID: 436993324}
+  detectionRange: 5
+  fadeSpeed: 3
 --- !u!1001 &1381212548
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19468,6 +19472,8 @@ MonoBehaviour:
   interactionPanel1: {fileID: 1516090228}
   interactSound: {fileID: 8300000, guid: 004743b7144db4b9bb585cafd2d442a6, type: 3}
   promptUI: {fileID: 1479394859}
+  detectionRange: 5
+  fadeSpeed: 3
 --- !u!1 &1418833201
 GameObject:
   m_ObjectHideFlags: 0
