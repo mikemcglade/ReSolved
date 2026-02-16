@@ -15,8 +15,12 @@ public class InteractableObject : MonoBehaviour
     private bool hasBeenInteracted = false;
     public AudioClip interactSound;
     
+    [Header("UI Prompt")]
+    public GameObject promptUI; // Assign the prompt Canvas in Inspector
+    
     // Flag to tell other scripts player is near interactable
     public static bool PlayerNearInteractable = false;
+    private Camera mainCamera;
 
     private void Start()
     {
@@ -24,10 +28,25 @@ public class InteractableObject : MonoBehaviour
         propertyBlock = new MaterialPropertyBlock();
         interactionPanel1.SetActive(false);
         gameManager = FindObjectOfType<GameManager>();
+        
+        mainCamera = Camera.main;
+        
+        // Hide prompt UI at start
+        if (promptUI != null)
+        {
+            promptUI.SetActive(false);
+        }
     }
 
     private void Update()
     {
+        // Make prompt face camera (billboard effect)
+        if (promptUI != null && promptUI.activeSelf && mainCamera != null)
+        {
+            promptUI.transform.LookAt(mainCamera.transform);
+            promptUI.transform.Rotate(0, 180, 0); // Flip to face camera correctly
+        }
+        
         if (isPlayerInRange && Input.GetKeyDown(KeyCode.E) && !isMessageDisplayed)
         {
             ShowInteractionUI();
@@ -61,8 +80,14 @@ public class InteractableObject : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             isPlayerInRange = true;
-            PlayerNearInteractable = true; // Set flag
+            PlayerNearInteractable = true;
             HighlightObject(true);
+            
+            // Show prompt UI
+            if (promptUI != null)
+            {
+                promptUI.SetActive(true);
+            }
         }
     }
 
@@ -71,8 +96,14 @@ public class InteractableObject : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             isPlayerInRange = false;
-            PlayerNearInteractable = false; // Clear flag
+            PlayerNearInteractable = false;
             HighlightObject(false);
+            
+            // Hide prompt UI
+            if (promptUI != null)
+            {
+                promptUI.SetActive(false);
+            }
         }
     }
 
