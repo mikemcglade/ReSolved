@@ -14,6 +14,9 @@ public class InteractableObject : MonoBehaviour
     private bool isMessageDisplayed = false;
     private bool hasBeenInteracted = false;
     public AudioClip interactSound;
+    
+    // Flag to tell other scripts player is near interactable
+    public static bool PlayerNearInteractable = false;
 
     private void Start()
     {
@@ -58,6 +61,7 @@ public class InteractableObject : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             isPlayerInRange = true;
+            PlayerNearInteractable = true; // Set flag
             HighlightObject(true);
         }
     }
@@ -67,6 +71,7 @@ public class InteractableObject : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             isPlayerInRange = false;
+            PlayerNearInteractable = false; // Clear flag
             HighlightObject(false);
         }
     }

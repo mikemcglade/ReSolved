@@ -7136,7 +7136,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 354601901}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ccb551e0f45e04813a94b1c198165cd1, type: 3}
   m_Name: 
@@ -7330,11 +7330,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   range: 3
   coneAngle: 60
-  duration: 0.5
+  duration: 2
   cooldown: 2
   flameEffect: {fileID: 120847375}
-  flamethrowerSound: {fileID: 0}
-  enemyKillSound: {fileID: 0}
+  flamethrowerSound: {fileID: 8300000, guid: 9c8d7ddd7565541f0b59969221ebabbc, type: 3}
+  enemyKillSound: {fileID: 8300000, guid: 5d00894d919bb4b25a54a3688c5b1b3f, type: 3}
 --- !u!1 &367064104
 GameObject:
   m_ObjectHideFlags: 0
@@ -14284,7 +14284,7 @@ Transform:
   m_GameObject: {fileID: 764907424}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.709, z: 0}
+  m_LocalPosition: {x: -5.7, y: 0.709, z: 16.6}
   m_LocalScale: {x: 0.64, y: 0.64, z: 0.64}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -17945,7 +17945,7 @@ Transform:
   m_GameObject: {fileID: 1418334631}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6.89, y: 0.78, z: 17.21}
+  m_LocalPosition: {x: 0.4, y: 0.78, z: -0.5}
   m_LocalScale: {x: 0.64, y: 0.64, z: 0.64}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -19025,7 +19025,7 @@ GameObject:
   - component: {fileID: 1616833621}
   m_Layer: 0
   m_Name: Enemy Followers
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

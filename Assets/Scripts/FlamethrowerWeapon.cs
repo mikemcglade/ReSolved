@@ -42,8 +42,8 @@ public class FlamethrowerWeapon : MonoBehaviour
             }
         }
 
-        // Fire flamethrower on E key
-        if (Input.GetKeyDown(KeyCode.E) && canFire)
+        // Fire flamethrower on E key ONLY if not near an interactable object
+        if (Input.GetKeyDown(KeyCode.E) && canFire && !InteractableObject.PlayerNearInteractable)
         {
             FireFlamethrower();
         }
