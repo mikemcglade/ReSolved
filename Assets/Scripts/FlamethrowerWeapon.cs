@@ -118,6 +118,12 @@ public class FlamethrowerWeapon : MonoBehaviour
                         {
                             gameManager.AddScore(detectCollisions.pointValue);
                         }
+                        
+                        // Spawn explosion particle effect
+                        if (detectCollisions.explosionParticle != null)
+                        {
+                            Instantiate(detectCollisions.explosionParticle, col.transform.position, detectCollisions.explosionParticle.transform.rotation);
+                        }
                     }
                     
                     // Play kill sound with slight delay
