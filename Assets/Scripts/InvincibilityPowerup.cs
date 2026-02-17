@@ -65,6 +65,7 @@ public class InvincibilityPowerup : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             gameManager.ActivateInvincibility(invincibilityDuration);
+            CollectableFlash.Instance.FlashInvincibility();
             PlayCollectSound();
             Destroy(gameObject);
         }
