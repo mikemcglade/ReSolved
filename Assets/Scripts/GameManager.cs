@@ -16,8 +16,6 @@ public class GameManager : MonoBehaviour
     private Coroutine invincibilityCoroutine;
     public Image invincibilityTimerImage;
     public Image[] livesImages;
-    public Image lifeLostOverlay;
-    public float fadeDuration = 0.5f;
     private int maxLives = 3;
 
     public GameObject[] enemyPrefabs;
@@ -100,7 +98,7 @@ public class GameManager : MonoBehaviour
         }
         else if (value < 0)
         {
-            StartCoroutine(FlashLifeLostOverlay());
+            CollectableFlash.Instance.FlashLifeLost();
         }
     }
 
@@ -194,33 +192,6 @@ public class GameManager : MonoBehaviour
         invincibilityCoroutine = null;
     }
 
-private IEnumerator FlashLifeLostOverlay()
-    {
-        // Fade in
-        yield return StartCoroutine(FadeOverlay(0f, 1f));
-        
-        // Short pause at full opacity
-        yield return new WaitForSeconds(0.1f);
-        
-        // Fade out
-        yield return StartCoroutine(FadeOverlay(1f, 0f));
-    }
-
-    private IEnumerator FadeOverlay(float startAlpha, float endAlpha)
-    {
-        float elapsedTime = 0f;
-        Color overlayColor = lifeLostOverlay.color;
-
-        while (elapsedTime < fadeDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            float alpha = Mathf.Lerp(startAlpha, endAlpha, elapsedTime / fadeDuration);
-            lifeLostOverlay.color = new Color(overlayColor.r, overlayColor.g, overlayColor.b, alpha);
-            yield return null;
-        }
-
-        lifeLostOverlay.color = new Color(overlayColor.r, overlayColor.g, overlayColor.b, endAlpha);
-    }
 public void RestartGame()
     {
         // Reload the current scene

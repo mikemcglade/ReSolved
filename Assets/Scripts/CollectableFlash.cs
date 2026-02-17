@@ -18,6 +18,7 @@ public class CollectableFlash : MonoBehaviour
     [Header("Colours")]
     public Color invincibilityColor = new Color(0f, 1f, 0.3f, 1f);  // Green
     public Color timeColor = new Color(0.2f, 0.5f, 1f, 1f);          // Blue
+    public Color lifeLostColor = new Color(1f, 0.1f, 0.1f, 1f);      // Red
 
     private Image vignetteImage;
     private Coroutine flashCoroutine;
@@ -68,6 +69,7 @@ public class CollectableFlash : MonoBehaviour
     // Convenience methods so collectables don't need to pass colours directly
     public void FlashInvincibility() => Flash(invincibilityColor);
     public void FlashTime() => Flash(timeColor);
+    public void FlashLifeLost() => Flash(lifeLostColor);
 
     private IEnumerator FlashRoutine(Color color)
     {
