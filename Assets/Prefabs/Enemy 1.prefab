@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: -861279078425346643}
   - component: {fileID: 3905038736808969049}
   - component: {fileID: 3908840602390703844}
+  - component: {fileID: -975392861079359696}
   m_Layer: 0
   m_Name: Enemy 1
   m_TagString: Enemy
@@ -150,6 +151,24 @@ MonoBehaviour:
   explosionParticle: {fileID: 4758139293545943008, guid: c7ad2532a6eeb40b59033c75e71fa054, type: 3}
   playerHitSound: {fileID: 8300000, guid: 9d22cec00b0314cec8ced5e433e4c017, type: 3}
   enemyDestroySound: {fileID: 8300000, guid: 0c4d74b59be37448fa3336dd222f1976, type: 3}
+--- !u!114 &-975392861079359696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3523268836644821977}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40c4b202bb0ff4f75abb4635a45e0acc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  phasingAlpha: 0.2
+  normalAlpha: 1
+  fadeSpeed: 3
 --- !u!1001 &4127280701392172227
 PrefabInstance:
   m_ObjectHideFlags: 0

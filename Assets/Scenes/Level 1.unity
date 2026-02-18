@@ -7246,6 +7246,9 @@ MonoBehaviour:
   - {fileID: 3018631650035655564, guid: d9b120a679aa9413c98f2beeb51a1a47, type: 3}
   - {fileID: 3555315163218884055, guid: 8b90e7ed2a1ed464e8af592f80ddb7e7, type: 3}
   - {fileID: 7933567176131990094, guid: df9a4b7e9137a437bad7c36b147d9572, type: 3}
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &265087507
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7269,6 +7272,9 @@ MonoBehaviour:
   - {fileID: 3018631650035655564, guid: d9b120a679aa9413c98f2beeb51a1a47, type: 3}
   - {fileID: 3555315163218884055, guid: 8b90e7ed2a1ed464e8af592f80ddb7e7, type: 3}
   - {fileID: 7933567176131990094, guid: df9a4b7e9137a437bad7c36b147d9572, type: 3}
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 0
   restartButton: {fileID: 0}
   gameOverScreen: {fileID: 0}
   rainController: {fileID: 0}
@@ -19194,6 +19200,9 @@ MonoBehaviour:
   - {fileID: 3018631650035655564, guid: d9b120a679aa9413c98f2beeb51a1a47, type: 3}
   - {fileID: 3555315163218884055, guid: 8b90e7ed2a1ed464e8af592f80ddb7e7, type: 3}
   - {fileID: 7933567176131990094, guid: df9a4b7e9137a437bad7c36b147d9572, type: 3}
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 64
   restartButton: {fileID: 1796006456}
   gameOverScreen: {fileID: 1326960613}
   rainController: {fileID: 0}
@@ -22036,7 +22045,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5461009199304634758, guid: 6c67ddb7ed5114faaa8fcf54735c1b42, type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5461009199304994214, guid: 6c67ddb7ed5114faaa8fcf54735c1b42, type: 3}
       propertyPath: m_LocalPosition.x
@@ -29399,7 +29408,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5461009199304634758, guid: 6c67ddb7ed5114faaa8fcf54735c1b42, type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5461009199304994214, guid: 6c67ddb7ed5114faaa8fcf54735c1b42, type: 3}
       propertyPath: m_LocalPosition.x
