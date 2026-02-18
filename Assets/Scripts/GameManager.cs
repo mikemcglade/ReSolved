@@ -41,6 +41,7 @@ public class GameManager : MonoBehaviour
     public AudioSource rainSoundEffect;
     public AudioClip backgroundMusicClip;
     public AudioClip rainSoundClip;
+    public AudioClip criticalHealthSound;
     private int finalScore;
     public TextMeshProUGUI levelCompleteText;
 
@@ -99,6 +100,13 @@ public class GameManager : MonoBehaviour
         else if (value < 0)
         {
             CollectableFlash.Instance.FlashLifeLost();
+            StartCoroutine(SlowMotionHit());
+            
+            // Check if this brings us to last life - activate persistent vignette
+            if (lives == 1)
+            {
+                ActivateLowHealthVignette();
+            }
         }
     }
 
@@ -284,4 +292,27 @@ public void InteractionComplete()
     int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
     SceneManager.LoadScene(currentSceneIndex + 1);
 }
+
+    private IEnumerator SlowMotionHit()
+    {
+        // Brief slow-mo on damage for impact feel
+        Time.timeScale = 0.5f;
+        yield return new WaitForSecondsRealtime(0.15f);
+        Time.timeScale = 1f;
+    }
+    
+    private void ActivateLowHealthVignette()
+    {
+        // Play one-shot critical health sound
+        if (criticalHealthSound != null && backgroundMusic != null)
+        {
+            backgroundMusic.PlayOneShot(criticalHealthSound);
+        }
+        
+        // Persistent red vignette when on last life
+        if (CollectableFlash.Instance != null)
+        {
+            CollectableFlash.Instance.ActivateLowHealthVignette();
+        }
+    }
 }

@@ -22,6 +22,7 @@ public class CollectableFlash : MonoBehaviour
 
     private Image vignetteImage;
     private Coroutine flashCoroutine;
+    private bool lowHealthVignetteActive = false;
 
     void Awake()
     {
@@ -60,6 +61,9 @@ public class CollectableFlash : MonoBehaviour
     /// </summary>
     public void Flash(Color color)
     {
+        // Don't flash if low health vignette is active - would clear it
+        if (lowHealthVignetteActive) return;
+        
         if (flashCoroutine != null)
             StopCoroutine(flashCoroutine);
 
@@ -70,6 +74,30 @@ public class CollectableFlash : MonoBehaviour
     public void FlashInvincibility() => Flash(invincibilityColor);
     public void FlashTime() => Flash(timeColor);
     public void FlashLifeLost() => Flash(lifeLostColor);
+    
+    /// <summary>
+    /// Activate persistent red vignette when player is on last life.
+    /// </summary>
+    public void ActivateLowHealthVignette()
+    {
+        if (lowHealthVignetteActive) return;
+        
+        lowHealthVignetteActive = true;
+        StartCoroutine(LowHealthVignettePulse());
+    }
+    
+    private IEnumerator LowHealthVignettePulse()
+    {
+        // Persistent pulsing red vignette
+        while (lowHealthVignetteActive)
+        {
+            float pulse = 0.3f + Mathf.Sin(Time.time * 2f) * 0.1f; // Pulse between 0.2 and 0.4 alpha
+            vignetteImage.color = new Color(lifeLostColor.r, lifeLostColor.g, lifeLostColor.b, pulse);
+            yield return null;
+        }
+        
+        vignetteImage.color = new Color(lifeLostColor.r, lifeLostColor.g, lifeLostColor.b, 0f);
+    }
 
     private IEnumerator FlashRoutine(Color color)
     {
