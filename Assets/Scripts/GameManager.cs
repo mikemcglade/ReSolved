@@ -108,6 +108,14 @@ public class GameManager : MonoBehaviour
                 ActivateLowHealthVignette();
             }
         }
+        else if (value > 0 && lives > 1)
+        {
+            // Gained a life and now above critical - deactivate vignette
+            if (CollectableFlash.Instance != null)
+            {
+                CollectableFlash.Instance.DeactivateLowHealthVignette();
+            }
+        }
     }
 
     private void UpdateLives()

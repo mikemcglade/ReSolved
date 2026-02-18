@@ -19,6 +19,7 @@ public class CollectableFlash : MonoBehaviour
     public Color invincibilityColor = new Color(0f, 1f, 0.3f, 1f);  // Green
     public Color timeColor = new Color(0.2f, 0.5f, 1f, 1f);          // Blue
     public Color lifeLostColor = new Color(1f, 0.1f, 0.1f, 1f);      // Red
+    public Color lifeGainedColor = new Color(0.2f, 1f, 0.2f, 1f);    // Bright green
 
     private Image vignetteImage;
     private Coroutine flashCoroutine;
@@ -74,6 +75,7 @@ public class CollectableFlash : MonoBehaviour
     public void FlashInvincibility() => Flash(invincibilityColor);
     public void FlashTime() => Flash(timeColor);
     public void FlashLifeLost() => Flash(lifeLostColor);
+    public void FlashLifeGained() => Flash(lifeGainedColor);
     
     /// <summary>
     /// Activate persistent red vignette when player is on last life.
@@ -84,6 +86,14 @@ public class CollectableFlash : MonoBehaviour
         
         lowHealthVignetteActive = true;
         StartCoroutine(LowHealthVignettePulse());
+    }
+    
+    /// <summary>
+    /// Deactivate low health vignette when player gains a life.
+    /// </summary>
+    public void DeactivateLowHealthVignette()
+    {
+        lowHealthVignetteActive = false;
     }
     
     private IEnumerator LowHealthVignettePulse()
