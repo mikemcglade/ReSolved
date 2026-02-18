@@ -8248,7 +8248,7 @@ MonoBehaviour:
   invincibilityColor: {r: 0.8679245, g: 0.75952226, b: 0.0040939935, a: 1}
   timeColor: {r: 0.06756754, g: 0.7075472, b: 0, a: 1}
   lifeLostColor: {r: 0.4339623, g: 0, b: 0, a: 1}
-  lifeGainedColor: {r: 0.2, g: 1, b: 0.2, a: 1}
+  lifeGainedColor: {r: 1, g: 0.052715246, b: 0, a: 1}
 --- !u!1 &373235917
 GameObject:
   m_ObjectHideFlags: 0
@@ -15326,7 +15326,6 @@ GameObject:
   - component: {fileID: 728164642}
   - component: {fileID: 728164641}
   - component: {fileID: 728164640}
-  - component: {fileID: 728164639}
   - component: {fileID: 728164638}
   - component: {fileID: 728164637}
   - component: {fileID: 728164636}
@@ -15349,7 +15348,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55fc09105ad66489f94111a855951af7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collectSound: {fileID: 0}
+  collectSound: {fileID: 8300000, guid: e5ba9eff9fd6e4eed8768b38aee65bbe, type: 3}
   promptUI: {fileID: 0}
   detectionRange: 5
   fadeSpeed: 3
@@ -15386,27 +15385,6 @@ SphereCollider:
     m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!135 &728164639
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 728164635}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
