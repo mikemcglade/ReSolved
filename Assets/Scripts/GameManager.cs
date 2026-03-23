@@ -259,6 +259,11 @@ public void ResumeGame()
     }
     }
 
+    public int GetCollectedItemsCount()
+    {
+        return interactedObjects.Count;
+    }
+
 public void InteractionComplete()
     {
         if (isWaitingForLastInteraction)

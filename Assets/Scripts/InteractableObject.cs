@@ -14,6 +14,16 @@ public class InteractableObject : MonoBehaviour
     private bool isMessageDisplayed = false;
     private bool hasBeenInteracted = false;
     public AudioClip interactSound;
+    
+    [Header("UI Prompt")]
+    public GameObject promptUI; // Assign the prompt Canvas in Inspector
+    public float detectionRange = 5f;
+    public float fadeSpeed = 3f;
+    
+    // Flag to tell other scripts player is near interactable
+    public static bool PlayerNearInteractable = false;
+    private Camera mainCamera;
+    private CanvasGroup promptCanvasGroup;
 
     private void Start()
     {
@@ -21,10 +31,47 @@ public class InteractableObject : MonoBehaviour
         propertyBlock = new MaterialPropertyBlock();
         interactionPanel1.SetActive(false);
         gameManager = FindObjectOfType<GameManager>();
+        
+        mainCamera = Camera.main;
+        
+        // Set up prompt UI fading (like powerups)
+        if (promptUI != null)
+        {
+            promptUI.SetActive(true); // Keep active, but invisible
+            
+            promptCanvasGroup = promptUI.GetComponent<CanvasGroup>();
+            if (promptCanvasGroup == null)
+            {
+                promptCanvasGroup = promptUI.AddComponent<CanvasGroup>();
+            }
+            promptCanvasGroup.alpha = 0f; // Start invisible
+        }
     }
 
     private void Update()
     {
+        // Make prompt face camera (billboard effect)
+        if (promptUI != null && mainCamera != null)
+        {
+            promptUI.transform.LookAt(mainCamera.transform);
+            promptUI.transform.Rotate(0, 180, 0); // Flip to face camera correctly
+        }
+        
+        // Fade prompt based on player distance (like powerups)
+        if (promptUI != null && promptCanvasGroup != null)
+        {
+            if (isPlayerInRange && !hasBeenInteracted)
+            {
+                // Fade in
+                promptCanvasGroup.alpha = Mathf.Lerp(promptCanvasGroup.alpha, 1f, fadeSpeed * Time.deltaTime);
+            }
+            else
+            {
+                // Fade out
+                promptCanvasGroup.alpha = Mathf.Lerp(promptCanvasGroup.alpha, 0f, fadeSpeed * Time.deltaTime);
+            }
+        }
+        
         if (isPlayerInRange && Input.GetKeyDown(KeyCode.E) && !isMessageDisplayed)
         {
             ShowInteractionUI();
@@ -58,7 +105,9 @@ public class InteractableObject : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             isPlayerInRange = true;
+            PlayerNearInteractable = true;
             HighlightObject(true);
+            // Prompt fading handled in Update()
         }
     }
 
@@ -67,7 +116,9 @@ public class InteractableObject : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             isPlayerInRange = false;
+            PlayerNearInteractable = false;
             HighlightObject(false);
+            // Prompt fading handled in Update()
         }
     }
 

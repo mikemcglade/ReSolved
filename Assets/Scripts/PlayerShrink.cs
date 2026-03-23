@@ -21,6 +21,9 @@ public class PlayerShrink : MonoBehaviour
 
     private AudioSource audioSource;
     private Material originalMaterial;
+    
+    // Public property so other scripts can check if player is shrunk
+    public bool IsShrunk { get { return isShrunk; } }
 
     private void Start()
     {

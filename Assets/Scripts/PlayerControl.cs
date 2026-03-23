@@ -18,6 +18,7 @@ public class PlayerControl : MonoBehaviour
     
     private Rigidbody playerRb;
     public Animator anim;
+    private PlayerShrink playerShrink;
 
     void Start()
     {
@@ -26,6 +27,9 @@ public class PlayerControl : MonoBehaviour
         
         // Set drag to prevent ice skating
         playerRb.drag = 8f;
+        
+        // Get PlayerShrink component
+        playerShrink = GetComponent<PlayerShrink>();
     }
 
     void FixedUpdate()
@@ -37,10 +41,16 @@ public class PlayerControl : MonoBehaviour
     {
         ConstrainPlayerPosition();
 
-        if (Input.GetKeyDown(KeyCode.Space) && Time.time > canFire)
+        // Can't fire while shrunk
+        if (Input.GetKeyDown(KeyCode.Space) && Time.time > canFire && !IsShrunk())
         {
             FireBullet();
         }
+    }
+    
+    private bool IsShrunk()
+    {
+        return playerShrink != null && playerShrink.IsShrunk;
     }
     
     private void FireBullet()
