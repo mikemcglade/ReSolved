@@ -16,15 +16,15 @@ public class GameManager : MonoBehaviour
     private Coroutine invincibilityCoroutine;
     public Image invincibilityTimerImage;
     public Image[] livesImages;
-    public Image lifeLostOverlay;
-    public float fadeDuration = 0.5f;
     private int maxLives = 3;
 
     public GameObject[] enemyPrefabs;
+    public LayerMask wallLayer; // Assign wall layer in Inspector
     private float spawnRangeX = 16;
     private float spawnPosZ = 20;
     private float startDelay = 2;
     private float spawnInterval = 2.5f;
+    private int maxSpawnAttempts = 10;
     private Coroutine spawnCoroutine;
     public GameObject restartButton;
     public GameObject gameOverScreen;
@@ -43,6 +43,7 @@ public class GameManager : MonoBehaviour
     public AudioSource rainSoundEffect;
     public AudioClip backgroundMusicClip;
     public AudioClip rainSoundClip;
+    public AudioClip criticalHealthSound;
     private int finalScore;
     public TextMeshProUGUI levelCompleteText;
 
@@ -100,7 +101,22 @@ public class GameManager : MonoBehaviour
         }
         else if (value < 0)
         {
-            StartCoroutine(FlashLifeLostOverlay());
+            CollectableFlash.Instance.FlashLifeLost();
+            StartCoroutine(SlowMotionHit());
+            
+            // Check if this brings us to last life - activate persistent vignette
+            if (lives == 1)
+            {
+                ActivateLowHealthVignette();
+            }
+        }
+        else if (value > 0 && lives > 1)
+        {
+            // Gained a life and now above critical - deactivate vignette
+            if (CollectableFlash.Instance != null)
+            {
+                CollectableFlash.Instance.DeactivateLowHealthVignette();
+            }
         }
     }
 
@@ -155,9 +171,30 @@ public class GameManager : MonoBehaviour
 
     void SpawnRandomEnemy()
     {
-        Vector3 spawnPos = new Vector3(Random.Range(-spawnRangeX, spawnRangeX), 1.1f, spawnPosZ);
-        int enemyIndex = Random.Range(0, enemyPrefabs.Length);
-        Instantiate(enemyPrefabs[enemyIndex], spawnPos, enemyPrefabs[enemyIndex].transform.rotation);
+        Vector3 spawnPos = Vector3.zero;
+        bool validPosition = false;
+        int attempts = 0;
+
+        // Try to find a valid spawn position (not inside a wall)
+        while (!validPosition && attempts < maxSpawnAttempts)
+        {
+            spawnPos = new Vector3(Random.Range(-spawnRangeX, spawnRangeX), 1.1f, spawnPosZ);
+            
+            // Check if this position overlaps with a wall
+            if (!Physics.CheckSphere(spawnPos, 0.5f, wallLayer))
+            {
+                validPosition = true;
+            }
+            
+            attempts++;
+        }
+
+        // Only spawn if we found a valid position
+        if (validPosition)
+        {
+            int enemyIndex = Random.Range(0, enemyPrefabs.Length);
+            Instantiate(enemyPrefabs[enemyIndex], spawnPos, enemyPrefabs[enemyIndex].transform.rotation);
+        }
     }
 
     public void SetInvincibility(bool status)
@@ -194,33 +231,6 @@ public class GameManager : MonoBehaviour
         invincibilityCoroutine = null;
     }
 
-private IEnumerator FlashLifeLostOverlay()
-    {
-        // Fade in
-        yield return StartCoroutine(FadeOverlay(0f, 1f));
-        
-        // Short pause at full opacity
-        yield return new WaitForSeconds(0.1f);
-        
-        // Fade out
-        yield return StartCoroutine(FadeOverlay(1f, 0f));
-    }
-
-    private IEnumerator FadeOverlay(float startAlpha, float endAlpha)
-    {
-        float elapsedTime = 0f;
-        Color overlayColor = lifeLostOverlay.color;
-
-        while (elapsedTime < fadeDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            float alpha = Mathf.Lerp(startAlpha, endAlpha, elapsedTime / fadeDuration);
-            lifeLostOverlay.color = new Color(overlayColor.r, overlayColor.g, overlayColor.b, alpha);
-            yield return null;
-        }
-
-        lifeLostOverlay.color = new Color(overlayColor.r, overlayColor.g, overlayColor.b, endAlpha);
-    }
 public void RestartGame()
     {
         // Reload the current scene
@@ -313,4 +323,27 @@ public void InteractionComplete()
     int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
     SceneManager.LoadScene(currentSceneIndex + 1);
 }
+
+    private IEnumerator SlowMotionHit()
+    {
+        // Brief slow-mo on damage for impact feel
+        Time.timeScale = 0.5f;
+        yield return new WaitForSecondsRealtime(0.15f);
+        Time.timeScale = 1f;
+    }
+    
+    private void ActivateLowHealthVignette()
+    {
+        // Play one-shot critical health sound
+        if (criticalHealthSound != null && backgroundMusic != null)
+        {
+            backgroundMusic.PlayOneShot(criticalHealthSound);
+        }
+        
+        // Persistent red vignette when on last life
+        if (CollectableFlash.Instance != null)
+        {
+            CollectableFlash.Instance.ActivateLowHealthVignette();
+        }
+    }
 }

@@ -68,6 +68,7 @@ public class TimeCollectable : MonoBehaviour
             if (timer != null)
             {
                 timer.AddTime(timeToAdd);
+                CollectableFlash.Instance.FlashTime();
                 PlayCollectSound();
                 Destroy(gameObject);
             }

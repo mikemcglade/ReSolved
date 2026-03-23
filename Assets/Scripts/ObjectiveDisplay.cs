@@ -12,8 +12,17 @@ public class ObjectiveDisplay : MonoBehaviour
     [Header("Persistent Counter")]
     public TextMeshProUGUI relicCounterText;
     
+    [Header("Bounce Prompt")]
+    public RectTransform promptText; // Assign "Press Space to Begin" text
+    public float bounceHeight = 8f;
+    public float bounceSpeed = 2f;
+    
+    // Blocks other scripts from using Space during start message
+    public static bool IsShowingStartMessage = false;
+    
     private GameManager gameManager;
     private CanvasGroup startMessageCanvasGroup;
+    private Vector3 promptOriginalPosition;
 
     void Start()
     {
@@ -28,6 +37,12 @@ public class ObjectiveDisplay : MonoBehaviour
                 startMessageCanvasGroup = startMessagePanel.AddComponent<CanvasGroup>();
             }
             
+            // Store prompt original position for bounce
+            if (promptText != null)
+            {
+                promptOriginalPosition = promptText.localPosition;
+            }
+            
             // Show start message
             StartCoroutine(ShowStartMessage());
         }
@@ -38,13 +53,21 @@ public class ObjectiveDisplay : MonoBehaviour
 
     void Update()
     {
-        // Update counter every frame
+        // Bounce the prompt text while message is showing
+        if (IsShowingStartMessage && promptText != null)
+        {
+            float bounce = Mathf.Sin(Time.unscaledTime * bounceSpeed) * bounceHeight;
+            promptText.localPosition = promptOriginalPosition + new Vector3(0, bounce, 0);
+        }
+        
+        // Update relic counter every frame
         UpdateRelicCounter();
     }
 
     IEnumerator ShowStartMessage()
     {
-        // Pause the game
+        // Block shooting and pause game
+        IsShowingStartMessage = true;
         Time.timeScale = 0f;
         
         // Start invisible
@@ -61,7 +84,7 @@ public class ObjectiveDisplay : MonoBehaviour
         }
         startMessageCanvasGroup.alpha = 1f;
         
-        // Wait for player to press Space OR auto-continue after duration
+        // Wait for Space OR auto-continue after duration
         float waitTime = 0f;
         bool spacePressed = false;
         
@@ -85,9 +108,16 @@ public class ObjectiveDisplay : MonoBehaviour
         }
         startMessageCanvasGroup.alpha = 0f;
         
-        // Hide and resume game
+        // Reset prompt position
+        if (promptText != null)
+        {
+            promptText.localPosition = promptOriginalPosition;
+        }
+        
+        // Hide, resume game and unblock shooting
         startMessagePanel.SetActive(false);
         Time.timeScale = 1f;
+        IsShowingStartMessage = false;
     }
 
     void UpdateRelicCounter()
@@ -99,3 +129,4 @@ public class ObjectiveDisplay : MonoBehaviour
         }
     }
 }
+

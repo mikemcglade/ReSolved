@@ -1,9 +1,7 @@
 using UnityEngine;
 
-public class InvincibilityPowerup : MonoBehaviour
+public class LifePowerup : MonoBehaviour
 {
-    public float invincibilityDuration = 7f;
-    private GameManager gameManager;
     public AudioClip collectSound;
     
     [Header("UI Prompt")]
@@ -17,7 +15,6 @@ public class InvincibilityPowerup : MonoBehaviour
 
     void Start()
     {
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
         mainCamera = Camera.main;
         
@@ -64,10 +61,13 @@ public class InvincibilityPowerup : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            gameManager.ActivateInvincibility(invincibilityDuration);
-            CollectableFlash.Instance.FlashInvincibility();
-            PlayCollectSound();
-            Destroy(gameObject);
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.AddLives(1);
+                CollectableFlash.Instance.FlashLifeGained();
+                PlayCollectSound();
+                Destroy(gameObject);
+            }
         }
     }
 

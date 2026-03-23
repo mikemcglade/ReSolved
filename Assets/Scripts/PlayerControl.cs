@@ -41,8 +41,8 @@ public class PlayerControl : MonoBehaviour
     {
         ConstrainPlayerPosition();
 
-        // Can't fire while shrunk
-        if (Input.GetKeyDown(KeyCode.Space) && Time.time > canFire && !IsShrunk())
+        // Can't fire while shrunk or start message is showing
+        if (Input.GetKeyDown(KeyCode.Space) && Time.time > canFire && !IsShrunk() && !ObjectiveDisplay.IsShowingStartMessage)
         {
             FireBullet();
         }
