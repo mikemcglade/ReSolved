@@ -4847,7 +4847,7 @@ GameObject:
   - component: {fileID: 486447739934726330}
   m_Layer: 0
   m_Name: Enemy Follower Patrol
-  m_TagString: FollowingEnemy
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4938,8 +4938,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1.2524877, z: 1.5929668}
-  m_Center: {x: 0, y: 0.12624383, z: -0.2964834}
+  m_Size: {x: 1.080996, y: 1.0647697, z: 1.5929668}
+  m_Center: {x: 0.5026648, y: 0.16079706, z: -0.2964834}
 --- !u!114 &22430306972401789
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4991,6 +4991,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waypoints:
+  - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   waypointWaitTime: 2
