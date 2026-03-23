@@ -4,11 +4,11 @@ using UnityEngine.AI;
 public class PatrollingEnemyAI : MonoBehaviour
 {
     // ─────────────────────────────────────────────────────────
-    // WEEK 4 ADDITIONS:
-    //   • Area patrol mode (random wandering within a zone)
-    //   • Patrol speed / chase speed split
-    //   • Per-enemy detection range + chase timeout tuning
-    //   • Chase speed boost applied to NavMeshAgent at runtime
+    // WEEK 5 ADDITIONS:
+    //   • Field of view (angle-based detection cone)       [5A]
+    //   • Sound / hearing radius (omnidirectional)         [5B]
+    //   • Catch detection (trigger → lives deduction)      [5C]
+    //   • Enemy type colours (Wanderer vs Guardian)        [5C]
     // ─────────────────────────────────────────────────────────
 
     [Header("Patrol Mode")]
@@ -24,24 +24,35 @@ public class PatrollingEnemyAI : MonoBehaviour
 
     // ── Area patrol settings ───────────────────────────────
     [Header("Area Patrol Settings")]
-    [Tooltip("Centre of the wander zone.")]
     [SerializeField] private Transform areaCenter;
-    [Tooltip("Radius of the wander zone.")]
     [SerializeField] private float areaRadius = 10f;
-    [Tooltip("Seconds to wait at each random destination before picking the next.")]
     [SerializeField] private float areaWaitTime = 2f;
 
     // ── Speed settings ─────────────────────────────────────
     [Header("Speed Settings")]
-    [Tooltip("NavMeshAgent speed while patrolling.")]
     [SerializeField] private float patrolSpeed = 3f;
-    [Tooltip("NavMeshAgent speed while chasing the player.")]
     [SerializeField] private float chaseSpeed = 5f;
 
     // ── Chase / detection settings ─────────────────────────
     [Header("Chase Settings")]
     [SerializeField] private float detectionRange = 10f;
     [SerializeField] private float chaseTimeout = 2f;
+
+    // ── Week 5A: FOV ───────────────────────────────────────
+    [Header("Week 5 - Detection")]
+    [Tooltip("Half-angle of the vision cone in degrees. 60 = 120 degree cone.")]
+    [SerializeField] private float viewAngle = 60f;
+
+    // ── Week 5B: Hearing ───────────────────────────────────
+    [Tooltip("Omnidirectional hearing radius. Smaller than detectionRange.")]
+    [SerializeField] private float hearingRange = 4f;
+
+    // ── Week 5C: Enemy type ────────────────────────────────
+   public enum EnemyType { Wanderer, Guardian }
+
+    [Header("Week 5 - Enemy Type")]
+    [Tooltip("Wanderer = area patrol (crimson). Guardian = waypoint patrol (blue).")]
+    [SerializeField] private EnemyType enemyType = EnemyType.Guardian;
 
     // ── Visual feedback ────────────────────────────────────
     [Header("Visual Feedback")]
@@ -72,20 +83,17 @@ public class PatrollingEnemyAI : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
 
-        // Cache all renderers (handles multi-material Blender imports)
         enemyRenderers = GetComponentsInChildren<Renderer>();
         originalMaterials = new Material[enemyRenderers.Length][];
         for (int i = 0; i < enemyRenderers.Length; i++)
             originalMaterials[i] = enemyRenderers[i].sharedMaterials;
 
-        // Ensure alert particle is off at start
+        ApplyTypeColour();
+
         if (alertParticle != null)
             alertParticle.Stop();
 
-        // Apply patrol speed at start
         agent.speed = patrolSpeed;
-
-        // Begin first patrol move
         StartFirstPatrol();
     }
 
@@ -98,11 +106,10 @@ public class PatrollingEnemyAI : MonoBehaviour
             else
                 Debug.LogError("[PatrollingEnemyAI] No waypoints assigned to " + gameObject.name);
         }
-        else // Area
+        else
         {
             if (areaCenter == null)
             {
-                // Fall back to using the enemy's own position as the center
                 Debug.LogWarning("[PatrollingEnemyAI] No areaCenter assigned on " + gameObject.name
                     + " — using enemy's own position.");
                 areaCenter = transform;
@@ -120,13 +127,13 @@ public class PatrollingEnemyAI : MonoBehaviour
         {
             case State.Patrolling:
                 Patrol();
-                if (distanceToPlayer <= detectionRange && CanSeePlayer())
+                if (CanSeePlayer() || CanHearPlayer())
                     StartChasing();
                 break;
 
             case State.Waiting:
                 Wait();
-                if (distanceToPlayer <= detectionRange && CanSeePlayer())
+                if (CanSeePlayer() || CanHearPlayer())
                     StartChasing();
                 break;
 
@@ -173,14 +180,12 @@ public class PatrollingEnemyAI : MonoBehaviour
         }
     }
 
-    // ── Area patrol helper ─────────────────────────────────
     void MoveToRandomAreaPoint()
     {
-        // Try up to 10 times to find a valid NavMesh point inside the radius
         for (int attempt = 0; attempt < 10; attempt++)
         {
             Vector3 randomPoint = areaCenter.position + Random.insideUnitSphere * areaRadius;
-            randomPoint.y = areaCenter.position.y; // Keep on the same floor level
+            randomPoint.y = areaCenter.position.y;
 
             NavMeshHit navHit;
             if (NavMesh.SamplePosition(randomPoint, out navHit, areaRadius, NavMesh.AllAreas))
@@ -190,7 +195,6 @@ public class PatrollingEnemyAI : MonoBehaviour
             }
         }
 
-        // Fallback: go back to center if no valid point found
         agent.SetDestination(areaCenter.position);
         Debug.LogWarning("[PatrollingEnemyAI] Could not find valid NavMesh point in area for "
             + gameObject.name + " — moving to center.");
@@ -203,12 +207,8 @@ public class PatrollingEnemyAI : MonoBehaviour
     {
         currentState = State.Chasing;
         chaseTimer = 0f;
-
-        // Boost speed for the chase
         agent.speed = chaseSpeed;
-
         SetMaterialColors(chaseColor);
-
         if (alertParticle != null)
             alertParticle.Play();
     }
@@ -242,7 +242,6 @@ public class PatrollingEnemyAI : MonoBehaviour
         }
         else
         {
-            // For area patrol, just wander back toward the zone center
             agent.SetDestination(areaCenter.position);
         }
 
@@ -250,12 +249,8 @@ public class PatrollingEnemyAI : MonoBehaviour
         {
             currentState = State.Waiting;
             waitTimer = 0f;
-
-            // Restore patrol speed
             agent.speed = patrolSpeed;
-
             ResetMaterialColors();
-
             if (alertParticle != null)
                 alertParticle.Stop();
         }
@@ -281,16 +276,61 @@ public class PatrollingEnemyAI : MonoBehaviour
         return nearestIndex;
     }
 
+    // ── Week 5A: FOV detection ─────────────────────────────
     bool CanSeePlayer()
     {
+        float dist = Vector3.Distance(transform.position, player.position);
+        if (dist > detectionRange) return false;
+
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
+
+        float angle = Vector3.Angle(transform.forward, directionToPlayer);
+        if (angle > viewAngle) return false;
+
         RaycastHit hit;
         if (Physics.Raycast(transform.position, directionToPlayer, out hit, detectionRange))
-        {
-            if (hit.transform.CompareTag("Player"))
-                return true;
-        }
+            return hit.transform.CompareTag("Player");
+
         return false;
+    }
+
+    // ── Week 5B: Hearing detection ─────────────────────────
+    bool CanHearPlayer()
+    {
+        return Vector3.Distance(transform.position, player.position) <= hearingRange;
+    }
+
+    // ── Week 5C: Enemy type colours ────────────────────────
+    void ApplyTypeColour()
+    {
+        Color skinCol, tentacleCol;
+
+        if (enemyType == EnemyType.Wanderer)
+        {
+            skinCol     = new Color(0.55f, 0.1f,  0.1f);
+            tentacleCol = new Color(0.8f,  0.2f,  0.0f);
+        }
+        else
+        {
+            skinCol     = new Color(0.15f, 0.15f, 0.5f);
+            tentacleCol = new Color(0.2f,  0.0f,  0.7f);
+        }
+
+        for (int i = 0; i < enemyRenderers.Length; i++)
+        {
+            Material[] mats = enemyRenderers[i].materials;
+            for (int j = 0; j < mats.Length; j++)
+            {
+                if (mats[j].name.ToLower().Contains("tentacle"))
+                    mats[j].color = tentacleCol;
+                else
+                    mats[j].color = skinCol;
+            }
+            enemyRenderers[i].materials = mats;
+        }
+
+        for (int i = 0; i < enemyRenderers.Length; i++)
+            originalMaterials[i] = enemyRenderers[i].sharedMaterials;
     }
 
     void SetMaterialColors(Color color)
@@ -311,11 +351,18 @@ public class PatrollingEnemyAI : MonoBehaviour
     // ══════════════════════════════════════════════════════
     void OnDrawGizmosSelected()
     {
-        // Detection range
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
 
-        // Area patrol zone
+        Gizmos.color = Color.cyan;
+        Vector3 leftEdge  = Quaternion.AngleAxis(-viewAngle, Vector3.up) * transform.forward * detectionRange;
+        Vector3 rightEdge = Quaternion.AngleAxis( viewAngle, Vector3.up) * transform.forward * detectionRange;
+        Gizmos.DrawLine(transform.position, transform.position + leftEdge);
+        Gizmos.DrawLine(transform.position, transform.position + rightEdge);
+
+        Gizmos.color = new Color(0f, 1f, 0f, 0.2f);
+        Gizmos.DrawWireSphere(transform.position, hearingRange);
+
         if (patrolMode == PatrolMode.Area && areaCenter != null)
         {
             Gizmos.color = new Color(0f, 0.8f, 1f, 0.25f);
@@ -324,7 +371,6 @@ public class PatrollingEnemyAI : MonoBehaviour
             Gizmos.DrawWireSphere(areaCenter.position, areaRadius);
         }
 
-        // Line-of-sight ray (Play mode only)
         if (player != null)
         {
             Vector3 directionToPlayer = (player.position - transform.position).normalized;
