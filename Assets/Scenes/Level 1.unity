@@ -7680,6 +7680,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 486447739934726330, guid: 8c756308d5e154b418261e36f1b0b774, type: 3}
+      propertyPath: hearingRange
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 486447739934726330, guid: 8c756308d5e154b418261e36f1b0b774, type: 3}
       propertyPath: waypoints.Array.data[0]
       value: 
       objectReference: {fileID: 1470664022}
