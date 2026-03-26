@@ -1,38 +1,37 @@
 using System.Collections;
 using UnityEngine;
 
-public class CircularCameraMovement : MonoBehaviour
+public class OrbitCamera : MonoBehaviour
 {
     [Header("Orbit Settings")]
     public Transform playerTransform;
     public float radius = 10f;
-    public float rotationSpeed = 1.5f;       // radians per second
+    public float rotationSpeed = 1.5f;
     public float rotationDuration = 5f;
-    public float heightOffset = 4f;          // height above player pivot
+    public float heightOffset = 4f;
 
     [Header("References")]
-    public FollowPlayer normalCameraScript;
+    public Camera mainCamera;
     public PlayerControl playerControl;
 
     private float currentAngle = 0f;
 
-    void OnEnable()
+    void Start()
     {
-        currentAngle = 0f;
-
-        if (playerControl != null)
-            playerControl.enabled = false;
-
-        // Stop the follow-cam fighting the orbit
-        if (normalCameraScript != null)
-            normalCameraScript.enabled = false;
-
         StartCoroutine(OrbitRoutine());
     }
 
     IEnumerator OrbitRoutine()
     {
+        // Freeze player, activate orbit cam, deactivate main cam
+        if (playerControl != null)
+            playerControl.enabled = false;
+
+        mainCamera.gameObject.SetActive(false);
+        gameObject.SetActive(true);
+
         float elapsed = 0f;
+        currentAngle = 0f;
 
         while (elapsed < rotationDuration)
         {
@@ -50,16 +49,11 @@ public class CircularCameraMovement : MonoBehaviour
             yield return null;
         }
 
-        // Wait one frame before handing back control
-        yield return null;
+        // Hand back to main camera, unfreeze player
+        mainCamera.gameObject.SetActive(true);
+        playerControl.enabled = true;
 
-        if (normalCameraScript != null)
-            normalCameraScript.enabled = true;
-
-        if (playerControl != null)
-            playerControl.enabled = true;
-
-        enabled = false;
-        Debug.Log("Orbit done. FollowPlayer enabled: " + (normalCameraScript != null ? normalCameraScript.enabled.ToString() : "NULL REFERENCE"));
+        // Deactivate orbit camera entirely
+        gameObject.SetActive(false);
     }
 }
