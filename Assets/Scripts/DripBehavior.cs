@@ -10,7 +10,7 @@ public class DripBehavior : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         rb.useGravity = true;
-        rb.velocity = Vector3.zero; // Ensure the drip starts with no initial velocity
+        rb.velocity = Vector3.zero;
     }
 
     void OnCollisionEnter(Collision collision)
