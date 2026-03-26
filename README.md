@@ -4,6 +4,8 @@
 
 ReSolved is a 3D third-person maze game built in Unity 2022.3.48. The player navigates a maze environment, collecting powerups and avoiding enemies. This submission focuses on the design and implementation of a NavMesh-based enemy AI system built incrementally over a 6-week development period.
 
+This submission targets the role of **Narrative Technical Designer**. The enemy AI system was designed with player experience and tension as the primary concern — treating technical implementation as a tool for gameplay feel and narrative atmosphere rather than an end in itself. The unpredictability of the area patrol mode, the realism of line-of-sight detection, and the visual clarity of enemy state feedback are all decisions driven by how the player experiences the maze, not just what was technically possible.
+
 ---
 
 ## New Feature: Patrolling Enemy AI System
@@ -33,7 +35,7 @@ The area patrol mode in particular introduces unpredictability without requiring
 
 ### Single Responsibility Principle
 
-The AI system follows the Single Responsibility Principle throughout. Each script has one job:
+The AI system was designed around the Single Responsibility Principle, a core software engineering practice covered during the course. Each script has one clearly defined job:
 
 | Script | Responsibility |
 |--------|---------------|
@@ -41,7 +43,7 @@ The AI system follows the Single Responsibility Principle throughout. Each scrip
 | `DetectCollisions.cs` | Player contact, life deduction, enemy destruction |
 | `GameManager.cs` | Game state, score, win/lose conditions |
 
-These scripts communicate where necessary but are not dependent on each other's internal logic. `PatrollingEnemyAI.cs` does not manage lives — it simply exists in the scene. `DetectCollisions.cs` handles what happens when contact is made. This separation means either system can be modified without breaking the other.
+These scripts communicate where necessary but are not dependent on each other's internal logic. `PatrollingEnemyAI.cs` does not manage lives — it simply exists in the scene. `DetectCollisions.cs` handles what happens when contact is made. This separation means either system can be modified without breaking the other — which is exactly what the Single Responsibility Principle is designed to achieve.
 
 ### State Machine Design
 
