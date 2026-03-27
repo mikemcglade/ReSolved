@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour
     private int maxLives = 3;
 
     public GameObject[] enemyPrefabs;
-    public LayerMask wallLayer; // Assign wall layer in Inspector
+    public LayerMask wallLayer;
     private float spawnRangeX = 16;
     private float spawnPosZ = 20;
     private float startDelay = 2;
@@ -32,12 +32,10 @@ public class GameManager : MonoBehaviour
     public RainController rainController;
     private HashSet<InteractableObject> interactedObjects = new HashSet<InteractableObject>();
 
-
     private int totalInteractableObjects = 3;
     public GameObject levelCompleteScreen;
     private InteractableObject lastInteractedObject;
     private bool isWaitingForLastInteraction = false;
-    // adds UI visual effect for powerup
     private PlayerVisualEffect playerVisualEffect;
     public AudioSource backgroundMusic;
     public AudioSource rainSoundEffect;
@@ -47,32 +45,9 @@ public class GameManager : MonoBehaviour
     private int finalScore;
     public TextMeshProUGUI levelCompleteText;
 
-
-    void Start()
-    {
-        score = 0;
-        lives = maxLives;
-        UpdateScore();
-        UpdateLives();
-
-        isGameActive = true;
-        //restartButton.SetActive(false);
-        gameOverText.gameObject.SetActive(false);
-        gameOverScreen.SetActive(false);
-
-        interactedObjects = new HashSet<InteractableObject>();
-
-        spawnCoroutine = StartCoroutine(SpawnEnemies());
-        levelCompleteScreen.SetActive(false);
-
-       // adds UI visual effect for powerup duration
-        playerVisualEffect = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerVisualEffect>();
-        rainController = GameObject.Find("RainEffect").GetComponent<RainController>();
-        SetRainIntensity(0.5f); // Start with medium rain
-        
-        PlayBackgroundMusic();
-        PlayRainSound();
-    }
+    [Header("Game Over HUD")]
+    public GameObject minimapBorder;
+    public GameObject relicCounter;
 
     public static GameManager Instance;
 
@@ -87,10 +62,36 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    void Start()
+    {
+        score = 0;
+        lives = maxLives;
+        UpdateScore();
+        UpdateLives();
+
+        isGameActive = true;
+        gameOverText.gameObject.SetActive(false);
+        gameOverScreen.SetActive(false);
+
+        interactedObjects = new HashSet<InteractableObject>();
+
+        spawnCoroutine = StartCoroutine(SpawnEnemies());
+        levelCompleteScreen.SetActive(false);
+
+        playerVisualEffect = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerVisualEffect>();
+        rainController = GameObject.Find("RainEffect").GetComponent<RainController>();
+        SetRainIntensity(0.5f);
+
+        PlayBackgroundMusic();
+        PlayRainSound();
+    }
+
     public void SetRainIntensity(float intensity)
     {
         rainController.SetRainIntensity(intensity);
     }
+
     public void AddLives(int value)
     {
         lives = Mathf.Clamp(lives + value, 0, maxLives);
@@ -103,8 +104,7 @@ public class GameManager : MonoBehaviour
         {
             CollectableFlash.Instance.FlashLifeLost();
             StartCoroutine(SlowMotionHit());
-            
-            // Check if this brings us to last life - activate persistent vignette
+
             if (lives == 1)
             {
                 ActivateLowHealthVignette();
@@ -112,7 +112,6 @@ public class GameManager : MonoBehaviour
         }
         else if (value > 0 && lives > 1)
         {
-            // Gained a life and now above critical - deactivate vignette
             if (CollectableFlash.Instance != null)
             {
                 CollectableFlash.Instance.DeactivateLowHealthVignette();
@@ -143,19 +142,57 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
+        // Clear vignette before showing game over screen
+        if (CollectableFlash.Instance != null)
+        {
+            CollectableFlash.Instance.DeactivateLowHealthVignette();
+        }
+
+        // Hide in-game HUD elements
+        if (minimapBorder != null) minimapBorder.SetActive(false);
+        if (relicCounter != null) relicCounter.SetActive(false);
+
         gameOverText.gameObject.SetActive(true);
-        restartButton.SetActive(true); // Show the restart button
+        restartButton.SetActive(true);
         gameOverScreen.SetActive(true);
 
         isGameActive = false;
+        PauseGame();
+
         if (spawnCoroutine != null)
         {
             StopCoroutine(spawnCoroutine);
         }
-        Debug.Log("Game Over");
-        // Waits 5 seconds before calling ReturnToStartScreen
-        Invoke("ReturnToStartScreen", 5f); 
 
+        Debug.Log("Game Over");
+        StartCoroutine(FadeOutMusic(7f));
+        StartCoroutine(ReturnToStartScreenDelayed());
+    }
+
+    private IEnumerator FadeOutMusic(float duration)
+    {
+        if (backgroundMusic == null) yield break;
+
+        float startVolume = backgroundMusic.volume;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            backgroundMusic.volume = Mathf.Lerp(startVolume, 0f, elapsed / duration);
+            yield return null;
+        }
+
+        backgroundMusic.volume = 0f;
+        backgroundMusic.Stop();
+        backgroundMusic.volume = startVolume; // Reset volume for safety if scene reloads
+    }
+
+    private IEnumerator ReturnToStartScreenDelayed()
+    {
+        yield return new WaitForSecondsRealtime(10f);
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("StartScreen");
     }
 
     IEnumerator SpawnEnemies()
@@ -175,21 +212,18 @@ public class GameManager : MonoBehaviour
         bool validPosition = false;
         int attempts = 0;
 
-        // Try to find a valid spawn position (not inside a wall)
         while (!validPosition && attempts < maxSpawnAttempts)
         {
             spawnPos = new Vector3(Random.Range(-spawnRangeX, spawnRangeX), 1.1f, spawnPosZ);
-            
-            // Check if this position overlaps with a wall
+
             if (!Physics.CheckSphere(spawnPos, 0.5f, wallLayer))
             {
                 validPosition = true;
             }
-            
+
             attempts++;
         }
 
-        // Only spawn if we found a valid position
         if (validPosition)
         {
             int enemyIndex = Random.Range(0, enemyPrefabs.Length);
@@ -209,7 +243,6 @@ public class GameManager : MonoBehaviour
             StopCoroutine(invincibilityCoroutine);
         }
         invincibilityCoroutine = StartCoroutine(InvincibilityTimer(duration));
-        // adds UI colour change for player
         playerVisualEffect.StartInvincibilityEffect(duration);
     }
 
@@ -231,25 +264,19 @@ public class GameManager : MonoBehaviour
         invincibilityCoroutine = null;
     }
 
-public void RestartGame()
+    public void RestartGame()
     {
-        // Reload the current scene
         Scene currentScene = SceneManager.GetActiveScene();
         SceneManager.LoadScene(currentScene.name);
     }
 
-private void ReturnToStartScreen()
-    {
-        SceneManager.LoadScene("StartScreen"); 
-    }
-
-public void PauseGame()
+    public void PauseGame()
     {
         Time.timeScale = 0f;
         isPaused = true;
     }
 
-public void ResumeGame()
+    public void ResumeGame()
     {
         Time.timeScale = 1f;
         isPaused = false;
@@ -257,16 +284,16 @@ public void ResumeGame()
 
     public void ObjectInteracted(InteractableObject interactedObject)
     {
-    if (!interactedObjects.Contains(interactedObject))
-    {
-        interactedObjects.Add(interactedObject);
-        lastInteractedObject = interactedObject;
-        
-        if (interactedObjects.Count >= totalInteractableObjects)
+        if (!interactedObjects.Contains(interactedObject))
         {
-            isWaitingForLastInteraction = true;
+            interactedObjects.Add(interactedObject);
+            lastInteractedObject = interactedObject;
+
+            if (interactedObjects.Count >= totalInteractableObjects)
+            {
+                isWaitingForLastInteraction = true;
+            }
         }
-    }
     }
 
     public int GetCollectedItemsCount()
@@ -274,17 +301,23 @@ public void ResumeGame()
         return interactedObjects.Count;
     }
 
-public void InteractionComplete()
+    public void InteractionComplete()
     {
         if (isWaitingForLastInteraction)
         {
             LevelComplete();
         }
     }
+
     private void LevelComplete()
     {
         isGameActive = false;
         finalScore = score;
+
+        // Hide in-game HUD elements
+        if (minimapBorder != null) minimapBorder.SetActive(false);
+        if (relicCounter != null) relicCounter.SetActive(false);
+
         levelCompleteScreen.SetActive(true);
         levelCompleteText.text = "Final Score: " + score;
 
@@ -292,17 +325,16 @@ public void InteractionComplete()
         {
             StopCoroutine(spawnCoroutine);
         }
+
         Debug.Log("Level Complete!");
-        
-        // Load the next level after a short delay
-        Invoke("LoadNextLevel", 3f); // Adjust delay as needed
+        Invoke("LoadNextLevel", 3f);
     }
 
     void PlayBackgroundMusic()
     {
-       if (backgroundMusic != null)
+        if (backgroundMusic != null)
         {
-        backgroundMusic.clip = backgroundMusicClip;
+            backgroundMusic.clip = backgroundMusicClip;
             backgroundMusic.loop = true;
             backgroundMusic.Play();
         }
@@ -310,37 +342,34 @@ public void InteractionComplete()
 
     void PlayRainSound()
     {
-      if (rainSoundEffect != null)
+        if (rainSoundEffect != null)
         {
-     rainSoundEffect.clip = rainSoundClip;
+            rainSoundEffect.clip = rainSoundClip;
             rainSoundEffect.loop = true;
             rainSoundEffect.Play();
         }
     }
 
     public void LoadNextLevel()
-{
-    int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-    SceneManager.LoadScene(currentSceneIndex + 1);
-}
+    {
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(currentSceneIndex + 1);
+    }
 
     private IEnumerator SlowMotionHit()
     {
-        // Brief slow-mo on damage for impact feel
         Time.timeScale = 0.5f;
         yield return new WaitForSecondsRealtime(0.15f);
         Time.timeScale = 1f;
     }
-    
+
     private void ActivateLowHealthVignette()
     {
-        // Play one-shot critical health sound
         if (criticalHealthSound != null && backgroundMusic != null)
         {
             backgroundMusic.PlayOneShot(criticalHealthSound);
         }
-        
-        // Persistent red vignette when on last life
+
         if (CollectableFlash.Instance != null)
         {
             CollectableFlash.Instance.ActivateLowHealthVignette();

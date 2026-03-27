@@ -2432,6 +2432,8 @@ MonoBehaviour:
   rainSoundClip: {fileID: 0}
   criticalHealthSound: {fileID: 0}
   levelCompleteText: {fileID: 0}
+  minimapBorder: {fileID: 0}
+  relicCounter: {fileID: 0}
 --- !u!4 &273398815 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2413348030017539048, guid: 8c756308d5e154b418261e36f1b0b774, type: 3}
@@ -12477,7 +12479,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 163}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1049157568
@@ -13184,7 +13186,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1151532912
 RectTransform:
   m_ObjectHideFlags: 0
@@ -14286,6 +14288,8 @@ MonoBehaviour:
   rainSoundClip: {fileID: 8300000, guid: 1123aa1fad08f430bb8a6a61d24aa3ec, type: 3}
   criticalHealthSound: {fileID: 8300000, guid: 5b7ab854d231a447f9a147a4fae44583, type: 3}
   levelCompleteText: {fileID: 1361970115}
+  minimapBorder: {fileID: 1663893564}
+  relicCounter: {fileID: 789670624}
 --- !u!82 &1323370912
 AudioSource:
   m_ObjectHideFlags: 0
@@ -14642,7 +14646,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 129987f6faf5746a7ab6b1d48259a1e4, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2bd540a9b2c6d4a9c829d4aa879bc1e2, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -14694,7 +14698,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -98}
+  m_AnchoredPosition: {x: 0, y: 65}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1361970115
@@ -16642,7 +16646,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -217, y: 113}
+  m_AnchoredPosition: {x: -201, y: 236}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1612394917
@@ -17709,6 +17713,7 @@ GameObject:
   - component: {fileID: 1796006460}
   - component: {fileID: 1796006459}
   - component: {fileID: 1796006458}
+  - component: {fileID: 1796006461}
   m_Layer: 5
   m_Name: Restart Game Button
   m_TagString: Untagged
@@ -17733,7 +17738,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2, y: -38}
+  m_AnchoredPosition: {x: 18, y: 85}
   m_SizeDelta: {x: 130.01, y: 31.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1796006458
@@ -17830,6 +17835,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1796006456}
   m_CullTransparentMesh: 1
+--- !u!114 &1796006461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1796006456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d93044e19450e45698667b67552714e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scaleMin: 0.95
+  scaleMax: 1.07
+  speed: 1.5
+  startDelay: 0.5
 --- !u!1 &1804043716
 GameObject:
   m_ObjectHideFlags: 0
@@ -17958,7 +17979,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1810338644
 RectTransform:
   m_ObjectHideFlags: 0
@@ -18236,7 +18257,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 129987f6faf5746a7ab6b1d48259a1e4, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ee7f2332ecce446e6a8a2c2673d2e39f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
