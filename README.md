@@ -6,6 +6,12 @@ ReSolved is a 3D third-person maze game built in Unity 2022.3.48. The player nav
 
 This submission targets the role of **Narrative Technical Designer**. The enemy AI system was designed with player experience and tension as the primary concern — treating technical implementation as a tool for gameplay feel and narrative atmosphere rather than an end in itself. The unpredictability of the area patrol mode, the realism of line-of-sight detection, and the visual clarity of enemy state feedback are all decisions driven by how the player experiences the maze, not just what was technically possible.
 
+## Video Overview
+
+A narrated walkthrough of the completed AI system — detection, FOV cone, hearing radius, enemy type colours, and catch detection — is available here:
+
+[▶ Watch on YouTube](https://youtu.be/1thvSmR2pvc)
+
 ---
 
 ## New Feature: Patrolling Enemy AI System
